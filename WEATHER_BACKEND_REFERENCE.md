@@ -5,7 +5,6 @@ This document provides the request/response models and a complete reference impl
 ## 1. API Specification
 
 ### Endpoint
-- **URL**: `/api/weather` (or user defined path)
 - **Method**: `POST`
 - **Content-Type**: `application/json`
 
@@ -215,18 +214,3 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
 ```
 
-## 3. Running the Backend
-
-1.  Save the python code above into a file named `weather_server.py`.
-2.  Install dependencies:
-    ```bash
-    pip install fastapi uvicorn
-    ```
-3.  Run the server:
-    ```bash
-    python weather_server.py
-    ```
-4.  Update your Frontend `.env` file (if needed) to point to this server:
-    ```ini
-    VITE_WEATHER_API_URL=http://localhost:8001/api/weather
-    ```

@@ -137,7 +137,7 @@ const NextWeekWeather = ({ weatherData }) => {
 
         const dayOfMonth = dateObj.getDate();
 
-        const weatherDescription = item.forecast.descriptor.short_desc;
+        const weatherDescription = item.forecast.descriptor.short_desc || "Clear";
         const iconUrl = getWeatherIcon(weatherDescription, temperature);
 
         return (
