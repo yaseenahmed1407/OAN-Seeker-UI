@@ -24,64 +24,6 @@ const cleanResponseText = (text) => {
   return cleaned;
 };
 
-// Helper to generate demo weather data
-const getDemoWeatherData = (location) => {
-  const items = [];
-  const today = new Date();
-
-  // 1. Current Weather Item
-  items.push({
-    descriptor: { name: "Current Weather" },
-    tags: [
-      {
-        list: [
-          { descriptor: { code: "Location" }, value: location || "Demo Location" },
-          { descriptor: { code: "Min-Temp" }, value: "22" },
-          { descriptor: { code: "Max-Temp" }, value: "34" },
-          { descriptor: { code: "Humidity" }, value: "45%" },
-          { descriptor: { code: "Wind-Speed" }, value: "12 km/h" },
-        ],
-      },
-    ],
-  });
-
-  // 2. Forecast Items (Next 5 days, morning and evening)
-  for (let i = 0; i < 5; i++) {
-    const futureDate = new Date(today);
-    futureDate.setDate(today.getDate() + i);
-    const dateStr = futureDate.toISOString().split('T')[0]; // YYYY-MM-DD
-
-    // Morning Forecast
-    items.push({
-      descriptor: { name: `Forecast for ${dateStr} 09:00:00` },
-      tags: [
-        {
-          list: [
-            { descriptor: { code: "Temperature" }, value: (24 + i).toString() },
-            { descriptor: { code: "Humidity" }, value: "50%" },
-            { descriptor: { code: "Wind-Speed" }, value: "10 km/h" },
-          ],
-        },
-      ],
-    });
-
-    // Evening Forecast
-    items.push({
-      descriptor: { name: `Forecast for ${dateStr} 18:00:00` },
-      tags: [
-        {
-          list: [
-            { descriptor: { code: "Temperature" }, value: (20 + i).toString() },
-            { descriptor: { code: "Humidity" }, value: "60%" },
-            { descriptor: { code: "Wind-Speed" }, value: "8 km/h" },
-          ],
-        },
-      ],
-    });
-  }
-
-  return items;
-};
 
 export const fetchWeather = async (selectedDistrict) => {
   if (!selectedDistrict) {
@@ -100,10 +42,28 @@ export const fetchWeather = async (selectedDistrict) => {
       { location: selectedDistrict },
       { headers: { "Content-Type": "application/json" } }
     );
-    return response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items || [];
+    const rawItems = response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items || [];
+    
+    // Sanitize items to match UI expectations:
+    // 1. "Current Weather" (or non-forecast item) should be at index 0.
+    // 2. All subsequent items must contain "Forecast for ".
+    
+    // Find valid forecasts
+    const forecasts = rawItems.filter(item => item?.descriptor?.name?.includes("Forecast for "));
+    // Find current weather (any item that isn't a forecast)
+    const current = rawItems.find(item => !item?.descriptor?.name?.includes("Forecast for "));
+
+    const sanitizedItems = [];
+    if (current) {
+      sanitizedItems.push(current);
+    }
+    // Append forecasts
+    sanitizedItems.push(...forecasts);
+    console.log("weather",sanitizedItems)
+    return sanitizedItems;
   } catch (error) {
     console.error("Error fetching weather, falling back to demo data:", error);
-    return getDemoWeatherData(selectedDistrict);
+    return [];
   }
 };
 
