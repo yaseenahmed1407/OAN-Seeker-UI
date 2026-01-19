@@ -51,9 +51,10 @@ const LocationPopup = ({ open, onClose, onLocationSelect }) => {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const response = await axios.get(
-          `${STATES_API}?lang=${language}&loc=${location || ""}`,
-          { headers: { accept: "application/json" } }
+        const response = await axios.post(
+          STATES_API,
+          { lang: language, loc: location || "" },
+          { headers: { accept: "application/json", "Content-Type": "application/json" } }
         );
         const stateList = response.data.states.map((state) => ({
           value: state.state_id,
@@ -73,9 +74,10 @@ const LocationPopup = ({ open, onClose, onLocationSelect }) => {
   const fetchDistricts = async (stateId) => {
     setLoadingDistricts(true);
     try {
-      const response = await axios.get(
-        `${DISTRICTS_API}/${stateId}?lang=${language}&loc=${location || ""}`,
-        { headers: { accept: "application/json" } }
+      const response = await axios.post(
+        `${DISTRICTS_API}/${stateId}`,
+        { lang: language, loc: location || "" },
+        { headers: { accept: "application/json", "Content-Type": "application/json" } }
       );
       setDistricts(response.data.districts);
     } catch (error) {
