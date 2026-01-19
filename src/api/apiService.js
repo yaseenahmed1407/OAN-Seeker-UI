@@ -27,53 +27,89 @@ const cleanResponseText = (text) => {
 export const fetchWeather = async (selectedDistrict) => {
   if (!selectedDistrict) {
     console.warn("No location selected for weather fetch");
-    return getDemoWeatherData("Unknown Location");
+    return [];
   }
 
   if (!WEATHER_API_URL) {
-    console.warn("WEATHER_API_URL is not defined. Returning demo weather data.");
-    return getDemoWeatherData(selectedDistrict);
+    console.warn("WEATHER_API_URL is not defined.");
+    return [];
   }
 
   try {
+    // Beckn protocol format
+    const requestBody = {
+      context: {
+        domain: "weather",
+        action: "search",
+        version: "1.0.0",
+        bap_id: "oan-seeker-ui",
+        bap_uri: "https://oan-seeker-ui.azurecontainer.io",
+        message_id: `msg_${Date.now()}`,
+        transaction_id: `txn_${Date.now()}`,
+        timestamp: new Date().toISOString()
+      },
+      message: {
+        intent: {
+          item: {
+            descriptor: {
+              name: selectedDistrict
+            }
+          }
+        }
+      }
+    };
+
     const response = await axios.post(
       WEATHER_API_URL,
-      { location: selectedDistrict },
+      requestBody,
       { headers: { "Content-Type": "application/json" } }
     );
+
     const rawItems = response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items || [];
-    
-    // Sanitize items to match UI expectations:
-    // 1. "Current Weather" (or non-forecast item) should be at index 0.
-    // 2. All subsequent items must contain "Forecast for ".
-    
-    // Find valid forecasts
+
+    // Sanitize items to match UI expectations
     const forecasts = rawItems.filter(item => item?.descriptor?.name?.includes("Forecast for "));
-    // Find current weather (any item that isn't a forecast)
     const current = rawItems.find(item => !item?.descriptor?.name?.includes("Forecast for "));
 
     const sanitizedItems = [];
     if (current) {
       sanitizedItems.push(current);
     }
-    // Append forecasts
     sanitizedItems.push(...forecasts);
-    console.log("weather",sanitizedItems)
+    console.log("weather", sanitizedItems);
     return sanitizedItems;
   } catch (error) {
-    console.error("Error fetching weather, falling back to demo data:", error);
+    console.error("Error fetching weather:", error);
     return [];
   }
 };
 
 export const fetchSchemes = async () => {
   try {
+    // Beckn protocol format
+    const requestBody = {
+      context: {
+        domain: "schemes",
+        action: "search",
+        version: "1.0.0",
+        bap_id: "oan-seeker-ui",
+        bap_uri: "https://oan-seeker-ui.azurecontainer.io",
+        message_id: `msg_${Date.now()}`,
+        transaction_id: `txn_${Date.now()}`,
+        timestamp: new Date().toISOString()
+      },
+      message: {
+        intent: {}
+      }
+    };
+
     const response = await axios.post(
-      SEARCH_API_URL, 
-      {},
+      SEARCH_API_URL,
+      requestBody,
       { headers: { "Content-Type": "application/json" } }
     );
-    return response.data?.data?.scheme_cache_data || [];
+
+    return response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items || [];
   } catch (error) {
     console.error("Error fetching schemes:", error);
     return [];
@@ -108,7 +144,7 @@ export const sendQueryToBot = async (
   audio
 ) => {
   setLoading(true);
-  
+
   // Add initial "Typing..." or placeholder message
   setMessages((prev) => {
     if (prev.length > 0 && prev[prev.length - 1].text.startsWith("Typing")) {
@@ -127,20 +163,20 @@ export const sendQueryToBot = async (
     if (audio) {
       try {
         const transcribeResponse = await axios.post(
-          TRANSCRIBE_API_URL, 
-          { 
+          TRANSCRIBE_API_URL,
+          {
             audio_content: audio,
-            session_id: "session_" + Date.now() 
+            session_id: "session_" + Date.now()
           },
           { headers: { "Content-Type": "application/json" } }
         );
-        
+
         const tData = transcribeResponse.data;
         if (tData.status === 'error') {
-           throw new Error(tData.message || "Transcription failed");
+          throw new Error(tData.message || "Transcription failed");
         }
         textToChat = tData.text;
-        
+
         if (!textToChat) {
           throw new Error("Could not transcribe audio (no text returned).");
         }
@@ -151,7 +187,7 @@ export const sendQueryToBot = async (
     }
 
     if (!textToChat) {
-        throw new Error("No query provided.");
+      throw new Error("No query provided.");
     }
 
     // 2. Send Chat Request (Using standard fetch for streaming support)
@@ -170,26 +206,26 @@ export const sendQueryToBot = async (
     });
 
     if (!response.ok) {
-       throw new Error(`Bot API returned error: ${response.statusText}`);
+      throw new Error(`Bot API returned error: ${response.statusText}`);
     }
 
     // 3. Handle Streaming Response
     // We update the UI incrementally as data arrives
     let fullText = "";
-    
+
     await readStream(response, (currentText) => {
-        fullText = currentText;
-        setMessages((prev) => {
-            const updatedMessages = prev.slice(0, -1);
-            return [
-                ...updatedMessages,
-                {
-                    text: cleanResponseText(fullText), // Clean in real-time or just at end? cleanliness might be tricky during stream
-                    sender: "bot",
-                    isStreaming: true
-                }
-            ];
-        });
+      fullText = currentText;
+      setMessages((prev) => {
+        const updatedMessages = prev.slice(0, -1);
+        return [
+          ...updatedMessages,
+          {
+            text: cleanResponseText(fullText), // Clean in real-time or just at end? cleanliness might be tricky during stream
+            sender: "bot",
+            isStreaming: true
+          }
+        ];
+      });
     });
 
     // Final clean and update
@@ -207,7 +243,7 @@ export const sendQueryToBot = async (
       ];
     });
 
-    return { response: finalCleanedText }; 
+    return { response: finalCleanedText };
 
   } catch (error) {
     console.error("Bot API Error:", error);
