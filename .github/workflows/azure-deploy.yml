@@ -10,13 +10,13 @@ on:
 env:
   DOCKER_IMAGE_NAME: oan-seeker-ui
   # configuration for backend APIs
-  VITE_WEATHER_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/weather/weatherUI"
-  VITE_SEARCH_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/schemes/search"
-  VITE_STATES_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/location/states"
-  VITE_DISTRICTS_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/location/districts"
-  VITE_AIBOT_API_URL: "http://oan-ai-api.dhekh2czg2f7exfc.uaenorth.azurecontainer.io:8000/api/v1/chat"
-  VITE_TRANSCRIBE_API_URL: "http://oan-ai-api.dhekh2czg2f7exfc.uaenorth.azurecontainer.io:8000/api/v1/transcribe"
-  VITE_TTS_API_URL: "http://oan-ai-api.dhekh2czg2f7exfc.uaenorth.azurecontainer.io:8000/api/v1/tts"
+  VITE_WEATHER_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/weather/"
+  VITE_SEARCH_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/schemes/"
+  VITE_STATES_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/states/"
+  VITE_DISTRICTS_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/districts"
+  VITE_AIBOT_API_URL: "http://oan-ai-api.dhekh2czg2f7exfc.uaenorth.azurecontainer.io:8000/api/chat/"
+  VITE_TRANSCRIBE_API_URL: "http://oan-ai-api.dhekh2czg2f7exfc.uaenorth.azurecontainer.io:8000/api/transcribe/"
+  VITE_TTS_API_URL: "http://oan-ai-api.dhekh2czg2f7exfc.uaenorth.azurecontainer.io:8000/api/tts/"
 
 jobs:
   build-and-push:
