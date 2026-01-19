@@ -109,7 +109,23 @@ export const fetchSchemes = async () => {
       { headers: { "Content-Type": "application/json" } }
     );
 
-    return response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items || [];
+    const items = response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items || [];
+
+    // Transform Beckn format to UI format
+    return items.map(item => ({
+      id: item.id,
+      title: item.descriptor?.name || "Untitled Scheme",
+      short_desc: item.descriptor?.short_desc || "",
+      long_desc: item.descriptor?.long_desc || "",
+      provider_name: response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.descriptor?.name || "Government",
+      categories: item.tags?.map(tag => tag.descriptor?.name).filter(Boolean) || [],
+      fulfillments: item.tags?.flatMap(tag =>
+        tag.list?.map(listItem => listItem.descriptor?.name || listItem.value).filter(Boolean)
+      ) || [],
+      images: item.descriptor?.images || [],
+      // Keep original item for details page
+      _original: item
+    }));
   } catch (error) {
     console.error("Error fetching schemes:", error);
     return [];
