@@ -10,7 +10,7 @@ on:
 env:
   DOCKER_IMAGE_NAME: oan-seeker-ui
   # configuration for backend APIs
-  VITE_WEATHER_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/weather/"
+  VITE_WEATHER_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/weather/WeatherUI"
   VITE_SEARCH_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/schemes/"
   VITE_STATES_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/states/"
   VITE_DISTRICTS_API_URL: "http://oan-mock-api.ccbjbrgzg6ewbmec.uaenorth.azurecontainer.io:8000/api/v1/districts"
