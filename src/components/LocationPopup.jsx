@@ -52,7 +52,7 @@ const LocationPopup = ({ open, onClose, onLocationSelect }) => {
     const fetchStates = async () => {
       try {
         const response = await axios.get(
-          `${STATES_API}?lang=${language}&loc=${location || ""}`,
+          `${STATES_API}?lang=${language}`,
           { headers: { accept: "application/json" } }
         );
         const stateList = response.data.states.map((state) => ({
@@ -68,13 +68,13 @@ const LocationPopup = ({ open, onClose, onLocationSelect }) => {
     };
 
     fetchStates();
-  }, [language, location]);
+  }, [language]);
 
   const fetchDistricts = async (stateId) => {
     setLoadingDistricts(true);
     try {
       const response = await axios.get(
-        `${DISTRICTS_API}/${stateId}?lang=${language}&loc=${location || ""}`,
+        `${DISTRICTS_API}/${stateId}?lang=${language}`,
         { headers: { accept: "application/json" } }
       );
       setDistricts(response.data.districts);

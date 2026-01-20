@@ -36,27 +36,9 @@ export const fetchWeather = async (selectedDistrict) => {
   }
 
   try {
-    // Beckn protocol format
+    // WeatherUI endpoint expects simple format: {"location": "string"}
     const requestBody = {
-      context: {
-        domain: "weather",
-        action: "search",
-        version: "1.0.0",
-        bap_id: "oan-seeker-ui",
-        bap_uri: "https://oan-seeker-ui.azurecontainer.io",
-        message_id: `msg_${Date.now()}`,
-        transaction_id: `txn_${Date.now()}`,
-        timestamp: new Date().toISOString()
-      },
-      message: {
-        intent: {
-          item: {
-            descriptor: {
-              name: selectedDistrict
-            }
-          }
-        }
-      }
+      location: selectedDistrict
     };
 
     const response = await axios.post(
@@ -65,7 +47,12 @@ export const fetchWeather = async (selectedDistrict) => {
       { headers: { "Content-Type": "application/json" } }
     );
 
-    const rawItems = response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items || [];
+    // The weatherUI endpoint returns a custom format, not Beckn protocol
+    // Adjust based on actual response structure
+    const rawItems = response.data?.responses?.[0]?.message?.catalog?.providers?.[0]?.items ||
+      response.data?.items ||
+      response.data ||
+      [];
 
     // Sanitize items to match UI expectations
     const forecasts = rawItems.filter(item => item?.descriptor?.name?.includes("Forecast for "));
