@@ -47,10 +47,16 @@ COPY --from=build /app/dist ./dist
 COPY host.json ./
 COPY StaticFileServer ./StaticFileServer
 
-# Copy package.json and install production dependencies
-COPY package*.json ./
-RUN npm ci --only=production
+# Copy package files and install ONLY the runtime dependencies
+COPY package.json package-lock.json ./
 
-# Expose port (Azure Functions uses port 80 in container)
+# Install only mime-types (needed by the function)
+RUN npm install --production mime-types
+
+# Set Azure Functions environment variables
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
+    FUNCTIONS_WORKER_RUNTIME=node
+
+# Expose port 80
+EXPOSE 80
