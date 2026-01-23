@@ -38,7 +38,7 @@ ENV VITE_MANDI_GOV_API_URL=$VITE_MANDI_GOV_API_URL
 ENV VITE_WAREHOUSE_API_URL=$VITE_WAREHOUSE_API_URL
 
 # Build the application
-RUN npm run build
+RUN rm -f .env* && npm run build
 
 # Stage 2: Serve the application with Nginx
 FROM nginx:alpine
