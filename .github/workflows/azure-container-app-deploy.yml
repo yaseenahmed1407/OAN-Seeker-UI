@@ -13,11 +13,11 @@ env:
   ACR_NAME: oanmockserver
   IMAGE_NAME: oan-seeker-ui
   # Backend API URLs
-  VITE_WEATHER_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/weather/weatherUI"
+  VITE_WEATHER_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/weather/weatherUI/"
   VITE_SEARCH_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/schemes/"
-  VITE_STATES_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/states"
-  VITE_DISTRICTS_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/districts"
-  VITE_AIBOT_API_URL: "https://oan-ai-function.politecoast-f62ee001.uaenorth.azurecontainerapps.io/chat"
+  VITE_STATES_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/states/"
+  VITE_DISTRICTS_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/districts/"
+  VITE_AIBOT_API_URL: "https://oan-ai-function.politecoast-f62ee001.uaenorth.azurecontainerapps.io/chat/"
   VITE_TRANSCRIBE_API_URL: "https://oan-ai-function.politecoast-f62ee001.uaenorth.azurecontainerapps.io/transcribe"
   VITE_TTS_API_URL: "https://oan-ai-function.politecoast-f62ee001.uaenorth.azurecontainerapps.io/tts"
   VITE_MANDI_API_URL: "https://oan-mock-server-e9egafdybcd4eah8.uaenorth-01.azurewebsites.net/api/v1/mandi/"
@@ -67,7 +67,7 @@ jobs:
           docker push ${IMAGE_TAG_SHA}
           docker push ${IMAGE_TAG}
           
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${IMAGE_TAG_SHA}" >> $GITHUB_ENV
 
       - name: Deploy to Azure Container App
         run: |
